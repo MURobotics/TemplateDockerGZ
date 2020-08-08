@@ -1,0 +1,58 @@
+version: '3'
+
+services:
+
+  master_node:
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./MasterNode
+    environment:
+      - "PYTHONUNBUFFERED=3"
+    networks:
+      - cluster
+    links:
+      - central_logic
+      - simulation
+
+  simulation:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./Simulation
+    ports:
+      - 6080:80
+      - 5900:5900
+    environment:
+      - "PYTHONUNBUFFERED=3"
+      - RESOLUTION=1280x850
+      - XAUTHORITY=/run/user/1000
+      - GAZMAP=MY.world
+    healthcheck:
+      disable: true
+    volumes:
+      - /dev/shm:/dev/shm
+      - /dorowu/ubuntu-desktop-lxde-vnc
+      - /opt/ros_ws/src/project/
+      # Excludes project sub-dir from being updated w/out rebuild
+      - ./Simulation/PersistingDir:/opt/ros_ws/src
+      # Includes volume link of Persisting Dir insite the ROS_WS at SRC sub-Dir for editing
+    networks:
+      - cluster
+
+  central_logic:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./Central_Logic
+    environment:
+      - "PYTHONUNBUFFERED=3"
+    networks:
+      - cluster
+
+volumes:
+  project:
+    driver: local
+  PersistingDir:
+
+networks:
+  cluster:
+    driver: "bridge"

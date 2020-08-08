@@ -1,0 +1,69 @@
+FROM interaze/gazebo-gui-biotic:v1.0
+
+# install build tools
+RUN apt-get update && apt-get install -y \
+      python-catkin-tools \
+      python-defusedxml \
+    && rm -rf /var/lib/apt/lists/*
+
+# clone ros package repo
+ENV ROS_WS /opt/ros_ws
+
+WORKDIR $ROS_WS
+
+COPY PersistingDir $ROS_WS/src
+
+RUN chmod +x $ROS_WS/src/project/src/main.py
+RUN chmod +x $ROS_WS/src/simulation_gazebo/launch/main.launch
+
+# install ros package dependencies
+RUN apt-get update && \
+  rosdep update && \
+  rosdep install -y \
+    --from-paths \
+      src/project \
+      src/simulation_description \
+      src/simulation_gazebo \
+    --ignore-src && \
+  rm -rf /var/lib/apt/lists/*
+
+# install python3 ROS deps
+RUN apt-get update && \
+    apt-get install -y \
+    python3-pip \
+    python3-yaml && \
+    export ROS_PYTHON_VERSION=3 && \
+    python3 -m pip install rospkg catkin_pkg defusedxml
+
+# build ros package source
+RUN catkin config \
+    --extend /opt/ros/$ROS_DISTRO && \
+  catkin build \
+    project \
+    simulation_gazebo \
+    simulation_description
+
+# source ros package from entrypoint
+RUN echo 'export ROS_MASTER_URI=http://master_node:11311' >> $ROS_WS/devel/setup.bash && \
+    sed --in-place --expression \
+    '$isource "$ROS_WS/devel/setup.bash"' \
+    /startup.sh
+
+RUN echo 'rosrun project main.py &' >> $ROS_WS/devel/setup.bash
+
+#roslaunch simulation_gazebo main.launch
+
+#https://answers.ros.org/question/312577/catkin_make-command-not-found-executing-by-a-dockerfile/ ruffsl is a saint
+
+################################################
+
+# Set environment variables for gzclient
+ENV GAZEBO_MASTER_IP=localhost
+ENV GAZEBO_MASTER_URI=$GAZEBO_MASTER_IP:11345
+
+ENV DISPLAY 1.0
+ENV GAZEBO_MODEL_PATH $ROS_WS/src
+
+EXPOSE 11345
+
+#gz model --model-name double_pendulum --spawn-file double_pendulum.sdf --world-name worlds/pioneer2dx.world
