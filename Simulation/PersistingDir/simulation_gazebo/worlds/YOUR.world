@@ -10,9 +10,9 @@
     <!-- Name it uniquely to not conflict with <include>'d model  -->
     <model name="simple_create">
       <include>
-	<uri>model://create</uri>
+	     <uri>model://create</uri>
       </include>
-      <plugin name="differential_drive_controller"     filename="libgazebo_ros_diff_drive.so">
+      <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
 	<alwaysOn>true</alwaysOn>
 	<updateRate>10</updateRate>
 	<leftJoint>create::right_wheel</leftJoint>
@@ -35,3 +35,5 @@
     </model>
   </world>
 </sdf>
+
+<!-- From http://jackmorrison.me/2016/05/27/hello-world-with-ros-and-gazebo.html -->
