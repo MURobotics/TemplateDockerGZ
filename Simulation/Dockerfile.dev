@@ -51,8 +51,6 @@ RUN echo 'export ROS_MASTER_URI=http://master_node:11311' >> $ROS_WS/devel/setup
 
 RUN echo 'rosrun project main.py &' >> $ROS_WS/devel/setup.bash
 
-#roslaunch simulation_gazebo main.launch
-
 #https://answers.ros.org/question/312577/catkin_make-command-not-found-executing-by-a-dockerfile/ ruffsl is a saint
 
 ################################################

@@ -27,7 +27,7 @@
 	<!-- topic name published in the cpp file -->
 	<odometryTopic>odom</odometryTopic>
 	<odometryFrame>odom</odometryFrame>
-    
+
 	<robotBaseFrame>base</robotBaseFrame>
 
 	<publishWheelTF>true</publishWheelTF>
