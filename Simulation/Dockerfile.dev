@@ -62,6 +62,4 @@ ENV GAZEBO_MASTER_URI=$GAZEBO_MASTER_IP:11345
 ENV DISPLAY 1.0
 ENV GAZEBO_MODEL_PATH $ROS_WS/src
 
-EXPOSE 11345
-
 #gz model --model-name double_pendulum --spawn-file double_pendulum.sdf --world-name worlds/pioneer2dx.world

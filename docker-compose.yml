@@ -22,6 +22,7 @@ services:
     ports:
       - 6080:80
       - 5900:5900
+      - 11345:11345
     environment:
       - "PYTHONUNBUFFERED=3"
       - RESOLUTION=1280x850
