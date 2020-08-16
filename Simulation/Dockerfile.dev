@@ -1,4 +1,4 @@
-FROM interaze/gazebo-gui-biotic:v1.0
+FROM interaze/gazebo-gui-biotic:v1.1
 
 # install build tools
 RUN apt-get update && apt-get install -y \
